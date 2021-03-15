@@ -19,9 +19,9 @@ const theKey = '2f3f900cab8237550ad9903e90afa5d7'
 let d = new Date()
 let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear()
 /************************** ************************/
-/**************Fetch Data from OpenWeather **************/ 
+/**************get Data from OpenWeather **************/ 
 
-    const fetchWeather = async (baseURL, zipIn, apiKey) => {
+    const getWeather = async (baseURL, zipIn, apiKey) => {
         try {
           const request = await fetch(
             `${baseURL}?zip=${zipIn},us&units=metric&APPID=${apiKey}`,
@@ -42,27 +42,35 @@ let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear()
 
 /************** POST Request to store date, temp and user input **************/ 
 
-    const saveData = async (path, data) => {
-        try {
-          await fetch(path, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          })
-        } catch (e) {
-          throw e
-        }
-      }
+const postAllData = async(url = '', data = {}) => {
+  const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          temp: data.temp,
+          date: data.date,
+          content: data.content
+      })
+  });
+
+  try {
+      const newData = await response.json();
+      return newData;
+  } catch (error) {
+      console.log(error);
+  }
+};
 /**************Event listener**************/
 doGenerate.addEventListener('click', () => {
-    fetchWeather(theUrl, zipIn.value, theKey)
+    getWeather(theUrl, zipIn.value, theKey)
       .then(daytemp => {
         return {dayDate: newDate, daytemp, boxContent: whatFeel.value}
       })
       .then(data => {
-        saveData('/api/projectdata', data)
+        postAllData('/api/projectdata', data)
         return data
       })
       .then(({daytemp, dayDate, boxContent}) => updateUI(daytemp, dayDate, boxContent))
@@ -73,14 +81,9 @@ doGenerate.addEventListener('click', () => {
   })
 /************************** ************************/
 /**************Update UI dynamically**************/
-
-const updateUI = async (temperature, newDate, whatFeel) => {
-    dayDate.innerText = newDate
-    daytemp.innerText = `${temperature} deg`
-    boxContent.innerText = whatFeel
+const updateUI = async (temperature, newDate, whatFeel)=> {
+    dayDate.innerHTML = newDate
+    daytemp.innerHTML = `${temperature} Dgree K`
+    boxContent.innerHTML = whatFeel
 }
 /************************** ************************/
-
-
-
-

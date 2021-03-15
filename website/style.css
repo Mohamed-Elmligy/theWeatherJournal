@@ -67,6 +67,7 @@ input{
     margin: 20px;
     padding: 20px;
     border-radius: 15px;
+    text-align: center;
 }
 
 button{
@@ -80,6 +81,7 @@ button{
     box-shadow: 2px 4px 5px #444;
     margin: 20px;
     border-radius: 15px;
+    cursor: pointer;
 }
 h1{
     font-size: 36px;
