@@ -31,18 +31,23 @@ app.use(express.static('website'));
 
 /************************ Post Route ***********************/
 app.post('/addWeatherData', addWeatherData)
-/*********************** addWeather variables **************/
-let projDataTemp = projectData.temperature;
-let projData = projectData.date;
-let projDataResp = projectData.user_response;
-let reqBodyTemp = request.body.temperature;
-let reqBodyData = request.body.date;
-let reqBodyRes = request.body.user_response;
+
 /******************************* **********************/
 function addWeatherData(request, response) {
+  /*********************** addWeather variables **************/
+let projDataTemp = projectData.temperature;
+let reqBodyTemp = request.body.temperature;
+
+let projDate = projectData.date;
+let reqBodyDate = request.body.date;
+
+let projDataResp = projectData.user_response;
+let reqBodyRes = request.body.user_response;
+
   projDataTemp = reqBodyTemp;
-  projData= reqBodyData;
+  projDate= reqBodyDate;
   projDataResp = reqBodyRes;
+
     response.end();
     console.log(projectData)
 }
