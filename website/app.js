@@ -11,79 +11,96 @@ const dayDate = document.getElementById('date')
 const daytemp = document.getElementById('temp')
 const boxContent = document.getElementById('content')
 /************************** ************************/
-/************** OpenWeatherApi conf **************/ 
+/************** OpenWeatherApi conf **************/
 const theUrl = 'https://api.openweathermap.org/data/2.5/weather'
 const theKey = '2f3f900cab8237550ad9903e90afa5d7'
 /************************** ************************/
-/************** Create a date dynamically with js **************/ 
+/************** Create a date dynamically with js **************/
 let d = new Date()
-let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear()
+let newDate = d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear()
 /************************** ************************/
-/**************get Data from OpenWeather **************/ 
+/**************get Data from OpenWeather **************/
 
-    const getWeather = async (baseURL, zipIn, apiKey) => {
-        try {
-          const request = await fetch(
-            `${baseURL}?zip=${zipIn},us&units=metric&APPID=${apiKey}`,
-          )
-          const result = await request.json()
-          //destructuring of the result 
-          const {
-            main: {temp},
-          } = result
-          return temp
-        } catch (e) {
-          throw e
-        }
-      }
-
-
-/************************** ************************/
-
-/************** POST Request to store date, temp and user input **************/ 
-
-const postAllData = async(url = '', data = {}) => {
-  const response = await fetch(url, {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: {
-          'Content-Type': 'application/json',
+const getWeather = async (baseURL, zipIn, apiKey) => {
+  try {
+    const request = await fetch(
+      `${baseURL}?zip=${zipIn},us&units=metric&APPID=${apiKey}`,
+    )
+    const result = await request.json()
+    //destructuring of the result 
+    const {
+      main: {
+        temp
       },
-      body: JSON.stringify({
-          temp: data.temp,
-          date: data.date,
-          content: data.content
-      })
+    } = result
+    return temp
+  } catch (e) {
+    throw e
+  }
+}
+
+
+/************************** ************************/
+
+/************** POST Request to store date, temp and user input **************/
+
+const postAllData = async (url = '', data = {}) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      temp: data.temp,
+      date: data.date,
+      content: data.content
+    })
   });
 
   try {
-      const newData = await response.json();
-      return newData;
+    const newData = await response.json();
+    return newData;
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 };
 /**************Event listener**************/
 doGenerate.addEventListener('click', () => {
-    getWeather(theUrl, zipIn.value, theKey)
-      .then(daytemp => {
-        return {dayDate: newDate, daytemp, boxContent: whatFeel.value}
-      })
-      .then(data => {
-        postAllData('/api/projectdata', data)
-        return data
-      })
-      .then(({daytemp, dayDate, boxContent}) => updateUI(daytemp, dayDate, boxContent))
-      .catch(e => {
-         //error handling 
-        console.error(e)
-      })
-  })
+  getWeather(theUrl, zipIn.value, theKey)
+    .then(daytemp => {
+      return {
+        dayDate: newDate,
+        daytemp,
+        boxContent: whatFeel.value
+      }
+    })
+    .then(data => {
+      postAllData('/api/projectdata', data)
+      return data
+    })
+    .then(({
+      daytemp,
+      dayDate,
+      boxContent
+    }) => updateUI(daytemp, dayDate, boxContent))
+    .catch(e => {
+      //error handling 
+      console.error(e)
+    })
+})
 /************************** ************************/
 /**************Update UI dynamically**************/
-const updateUI = async (temperature, newDate, whatFeel)=> {
-    dayDate.innerHTML = newDate
-    daytemp.innerHTML = `${temperature} Dgree K`
-    boxContent.innerHTML = whatFeel
+const updateUI = async (temperature, newDate, whatFeel) => {
+  dayDate.innerHTML = newDate
+  daytemp.innerHTML = `${temperature} Dgree K`
+  boxContent.innerHTML = whatFeel
+  const response = await fetch('/all');
+  try {
+    const allData = await response.json();
+    // render the response received from allData.
+  } catch (error) {
+
+  }
 }
 /************************** ************************/
