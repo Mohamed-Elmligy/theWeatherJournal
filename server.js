@@ -62,8 +62,9 @@ function getTheInfo(req, res) {
 /************************ ***********************/
 
 /********************** Setup Server ***********************/
+const http = require('http');
 const port = 8000;
 const theHostname = 'localhost';
 const server = http.createServer(app);
-server.listen(port, theHostname, () => console.log(`Server running on http://${TheHostname}:${port}`));
+server.listen(port, theHostname, () => console.log(`Server running on http://${theHostname}:${port}`));
 /************************ ***********************/
