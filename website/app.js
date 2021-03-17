@@ -17,7 +17,7 @@ const theKey = '2f3f900cab8237550ad9903e90afa5d7'
 /************************** ************************/
 /************** Create a date dynamically with js **************/
 let d = new Date()
-let newDate = d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear()
+let newDate = d.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 /************************** ************************/
 /**************get Data from OpenWeather **************/
 
