@@ -5,7 +5,8 @@ let projectData = {};
 /************************ Require Express to run server and routes ***********************/ 
 const express = require('express');
 /************************ ***********************/
-
+/********************* Listen Port **************/
+const port = 8000;
 /************************ Dependencies ***********************/
 const bodyParser = require('body-parser');
 /************************ ***********************/
@@ -29,42 +30,28 @@ app.use(cors());
 app.use(express.static('website'));
 /************************ ***********************/
 
-/************************ Post Route ***********************/
-app.post('/addWeatherData', addWeatherData)
+/******************* Setup Server *************/ 
+app.listen(port, () => {
+    console.log(`Server Running On: http://localhost:${port}`);
+});
 
-/******************************* **********************/
-function addWeatherData(request, response) {
-  /*********************** addWeather variables **************/
-let projDataTemp = projectData.temperature;
-let reqBodyTemp = request.body.temperature;
 
-let projDate = projectData.date;
-let reqBodyDate = request.body.date;
 
-let projDataResp = projectData.user_response;
-let reqBodyRes = request.body.user_response;
+/************************************ Require Express to run server and routes & Get All Data *************/ 
 
-  projDataTemp = reqBodyTemp;
-  projDate= reqBodyDate;
-  projDataResp = reqBodyRes;
+app.get('/getAll', (req, res) => {
+    res.send(projectData).status(200).end();
+});
 
-    response.end();
-    console.log(projectData)
-}
-/************************ ***********************/
 
-/************************ Callback function to complete GET '/all'***********************/ 
-app.get('/all', getTheInfo);
 
-function getTheInfo(req, res) {
-  res.send(projectData);
-}
-/************************ ***********************/
-
-/********************** Setup Server ***********************/
-const http = require('http');
-const port = 8000;
-const theHostname = 'localhost';
-const server = http.createServer(app);
-server.listen(port, theHostname, () => console.log(`Server running on http://${theHostname}:${port}`));
-/************************ ***********************/
+/************************* Post Data By The: http://localhost:4800/postData ********************/
+app.post('/postData', (req, res) => {
+    //Post Data Now
+    projectData={
+        temp:req.body.temp,
+        date:req.body.date,
+        content:req.body.content
+    };
+    res.send(projectData).status(404).end();
+});
