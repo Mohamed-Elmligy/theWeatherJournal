@@ -11,14 +11,10 @@ const boxContent = document.getElementById('content')
 /************************** ************************/
 
 /************** OpenWeatherApi conf **************/
-const theUrl = 'http://localhost:8000/'
+const theUrl = 'http://localhost:3000/'
 const theKey = '&appid=2f3f900cab8237550ad9903e90afa5d7&units=imperial'
+const urlWeather = 'http://api.openweathermap.org/data/2.5/forecast?zip='
 /************************** ************************/
-
-/**************************** help fun to find error **********************/
-const findError = (error) => console.error('Some ErrorHas Been => ', error);
-/**************************** ************************************/
-
 /************** Create a date dynamically with js **************/
 let d = new Date()
 let newDate = d.toLocaleString('en-US', {
@@ -29,29 +25,26 @@ let newDate = d.toLocaleString('en-US', {
 /************************** ************************/
 
 /************************** Event function to existing HTML DOM element ************************/
-document.getElementById('generate').addEventListener('click', doGenerate);
-
+const generate = document.getElementById('generate');
+generate.addEventListener('click', doGen);
 /*************** Post The Data To API ************************/
-function doGenerate() {
+function doGen() {
   let data = {
-    zipCode: zipIn.value,
+    addZipCode: zipIn.value,
     content: whatFeel.value,
     date: newDate
   };
 
   /***************** Post The Data To Api For Get Zip Code ************************/
-  getWeatherInformation(data.zipCode).then(zipInfo => {
-    if (zipInfo.cod != 200) //Return And Show Alert If City Is Not Found
-      return alert(zipInfo.message)
-    data.temp = zipInfo.list[0].main.temp; //Now Post Data To Server For Saving And Display In Holder Section
+  getWeatherInformation(data.addZipCode).then(getZipInfo => {
+    data.temp = getZipInfo.list[0].main.temp;
     postServer(data);
-  }).catch(findError);
+  })
 };
-
-
 /**************************** Get Zip Code Information From Api ************************/
-const getWeatherInformation = async (zipCode) => {
-  return await (await fetch(`http://api.openweathermap.org/data/2.5/forecast?zip=${zipCode}${theKey}`)).json()
+const getWeatherInformation = async (addZipCode) => {
+  const all = `${urlWeather}${addZipCode}${theKey}`
+  return await (await fetch(`${all}`)).json()
 }
 /************************************* ************************/
 
@@ -65,34 +58,24 @@ const postServer = async (data) => {
     body: JSON.stringify(data),
   });
   try {
-    if (!response.ok) {
-      alert('Process Not Successfuly');
-      return;
-    }
-
     response.json().then(data => {
-      if (response.ok)
-        updateTheUI(); //Update UI Now
-      else
-        alert('Process Not Successfuly');
-    }).catch(findError);
-
+        UI();
+    })
   } catch (error) {
-    findError(error);
+    console.log('e')
   }
 }
-
 /****************************** Update TheUI ************************/
-const updateTheUI = async () => {
+const UI = async () => {
   let response = await fetch(`${theUrl}getAll`);
   try {
     response.json().then(data => {
-      dayDate.innerHTML = `Date Is: ${data.date}`;
-      daytemp.innerHTML = `Temp Is: ${data.temp} K & ${data.temp-273} C`;
-      boxContent.innerHTML = `My Feelings Is: ${data.content}`;
-    }).catch(findError);
+      dayDate.innerHTML = `The Date Now is: ${data.date}`;
+      daytemp.innerHTML = `The Temprture Now is: ${data.temp} K & ${data.temp-273} C`;
+      boxContent.innerHTML = `My Feelings Now is: ${data.content}`;
+    })
   } catch (error) {
-    findError(error);
+    console.log('e')
   }
 }
 /***************************** *********************************/
